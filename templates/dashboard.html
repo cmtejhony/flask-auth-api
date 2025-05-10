@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Protegido</title>
+</head>
+<body>
+    <h1>Área Protegida</h1>
+
+    <div>
+        <button onclick="acessarProtegido()">Acessar rota protegida</button>
+        <p id="mensagem"></p>
+    </div>
+
+    <script>
+        async function acessarProtegido() {
+            const token = localStorage.getItem("token");
+
+            if (!token) {
+                document.getElementById("mensagem").innerText = "Você precisa estar logado!";
+                return;
+            }
+
+            try {
+                const response = await fetch("/protected", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    document.getElementById("mensagem").innerText = data.message;
+                } else {
+                    document.getElementById("mensagem").innerText = data.message || "Erro";
+                }
+            } catch (error) {
+                document.getElementById("mensagem").innerText = "Erro ao conectar.";
+            }
+        }
+    </script>
+</body>
+</html>
